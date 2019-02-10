@@ -15,7 +15,8 @@
     ["/items"
      ["" :items]
      ["/:item-id" :item]]
-    ["/about" :about]]))
+    ["/about" :about]
+    ["/mike" :mike]]))
 
 (defn path-for [route & [params]]
   (if params
@@ -32,7 +33,8 @@
      [:h1 "Welcome to fooz"]
      [:ul
       [:li [:a {:href (path-for :items)} "Items of fooz"]]
-      [:li [:a {:href "/borken/link"} "Borken link"]]]]))
+      [:li [:a {:href "/borken/link"} "Borken link"]]
+      [:li [:a {:href "/mike"} "Mike link"]] ]]))
 
 
 
@@ -54,10 +56,40 @@
        [:h1 (str "Item " item " of fooz")]
        [:p [:a {:href (path-for :items)} "Back to the list of items"]]])))
 
-
 (defn about-page []
   (fn [] [:span.main
-          [:h1 "About fooz"]]))
+          [:h1 "About fooz"]
+          [:div "funny you should ask. I was walking down the road one day when a man said to me: ..."]
+          ]))
+
+
+(defonce click-count (reagent/atom 0))
+
+(defn state-ful-with-atom []
+  [:button {:on-click #(swap! click-count inc)}
+   "I have been clicked " @click-count " times."])
+
+(defn random-hsla []
+  (str "hsla("
+       (* (rand) 360)
+       ", 100%, 50%, 1)")
+  )
+
+(defn should-draw-another [val]
+  (if (< 0 val)
+    [:div {:style {:background-color (random-hsla) :width "90%" :height "90%" :display "block"}} "a mike is a complete non-fungible thing!" (should-draw-another (dec val))]
+    nil
+    ))
+
+(defn mike-page []
+  (fn []
+    (let [foo (should-draw-another 5)]
+      [:span.main
+       [:h1 "About mike"]
+       [:div {:style {:position "absolute" :display "block" :width "1000px" :height "1000px"}}
+        foo]
+       [state-ful-with-atom]
+       ])))
 
 
 ;; -------------------------
@@ -68,7 +100,8 @@
     :index #'home-page
     :about #'about-page
     :items #'items-page
-    :item #'item-page))
+    :item #'item-page
+    :mike #'mike-page))
 
 
 ;; -------------------------
