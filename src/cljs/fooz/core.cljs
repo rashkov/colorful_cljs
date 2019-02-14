@@ -77,17 +77,17 @@
 
 (defn should-draw-another [val]
   (if (< 0 val)
-    [:div {:style {:background-color (random-hsla) :width "90%" :height "90%" :display "block"}} "a mike is a complete non-fungible thing!" (should-draw-another (dec val))]
+    [:div {:style {:background-color (random-hsla) :width "90%" :height "90%" :display "flex" :justify-content "center" :align-items "center"}} (should-draw-another (dec val))]
     nil
     ))
 
 (defn mike-page []
   (fn []
-    (let [foo (should-draw-another 5)]
+    (let [foo (should-draw-another 30)]
       [:span.main
        [:h1 "About mike"]
-       [:div {:style {:position "absolute" :display "block" :width "1000px" :height "1000px"}}
-        foo]
+       [:div {:style {:width "1000px" :height "1000px" :display "flex" :justify-content "center" :align-items "center"}}
+         foo]
        [state-ful-with-atom]
        ])))
 
