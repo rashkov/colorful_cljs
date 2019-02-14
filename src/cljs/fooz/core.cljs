@@ -75,11 +75,18 @@
        ", 100%, 50%, 1)")
   )
 
+(defn get-click-handler []
+  #(js/console.log "uhuh"))
+
 (defn should-draw-another [val]
-  (if (< 0 val)
-    [:div {:style {:background-color (random-hsla) :width "90%" :height "90%" :display "flex" :justify-content "center" :align-items "center"}} (should-draw-another (dec val))]
-    nil
-    ))
+  (defn clickHandler [e]
+    (js/console.log "yams")
+    (.stopPropagation e)
+    )
+    (if (< 0 val)
+      [:div {:style {:background-color (random-hsla) :width "90%" :height "90%" :display "flex" :justify-content "center" :align-items "center"} :on-click clickHandler} (should-draw-another (dec val))]
+      nil
+      ))
 
 (defn mike-page []
   (fn []
