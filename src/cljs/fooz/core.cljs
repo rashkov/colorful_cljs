@@ -79,10 +79,14 @@
   (map random-hsla (range depth))
   )
 
+(defn change-colors [depth color-map-atom]
+  (swap! color-map-atom #(generate-color-map-of-depth depth))
+  )
+
 (defn square-fractal [depth color-map-atom]
   (defn clickHandler [e]
     (.stopPropagation e)
-    (swap! color-map-atom #(generate-color-map-of-depth depth))
+    (change-colors depth color-map-atom)
     )
   (if (< 0 depth)
     [:div {:style {:background-color (nth @color-map-atom (- depth 1)) :width "90%" :height "90%" :display "flex" :justify-content "center" :align-items "center"} :on-click clickHandler} (square-fractal (dec depth) color-map-atom)]
@@ -94,9 +98,17 @@
   (def color-map (generate-color-map-of-depth fractal-depth))
   (def color-map-atom (reagent/atom color-map))
   ;; (js/console.log (clj->js color-map))
+  (defn scroll-handler [e]
+    (.stopPropagation e)
+    (.preventDefault e)
+    (change-colors fractal-depth color-map-atom)
+    )
   [:span.main
     [:h1 "About mike"]
-    [:div {:style {:width "1000px" :height "1000px" :display "flex" :justify-content "center" :align-items "center"}}
+   [:div {
+          :style {:width "1000px" :height "1000px" :display "flex" :justify-content "center" :align-items "center"}
+          :onWheel scroll-handler
+          }
       (square-fractal fractal-depth color-map-atom)]
     [state-ful-with-atom]
     ])
