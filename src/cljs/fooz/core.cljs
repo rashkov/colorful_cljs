@@ -75,28 +75,31 @@
        ", 100%, 50%, 1)")
   )
 
-(defn get-click-handler []
-  #(js/console.log "uhuh"))
+(defn generate-color-map-of-depth [depth]
+  (map random-hsla (range depth))
+  )
 
-(defn should-draw-another [val]
+(defn square-fractal [depth color-map-atom]
   (defn clickHandler [e]
-    (js/console.log "yams")
     (.stopPropagation e)
+    (swap! color-map-atom #(generate-color-map-of-depth depth))
     )
-    (if (< 0 val)
-      [:div {:style {:background-color (random-hsla) :width "90%" :height "90%" :display "flex" :justify-content "center" :align-items "center"} :on-click clickHandler} (should-draw-another (dec val))]
-      nil
-      ))
+  (if (< 0 depth)
+    [:div {:style {:background-color (nth @color-map-atom (- depth 1)) :width "90%" :height "90%" :display "flex" :justify-content "center" :align-items "center"} :on-click clickHandler} (square-fractal (dec depth) color-map-atom)]
+    nil
+    ))
 
 (defn mike-page []
-  (fn []
-    (let [foo (should-draw-another 30)]
-      [:span.main
-       [:h1 "About mike"]
-       [:div {:style {:width "1000px" :height "1000px" :display "flex" :justify-content "center" :align-items "center"}}
-         foo]
-       [state-ful-with-atom]
-       ])))
+  (def fractal-depth 30)
+  (def color-map (generate-color-map-of-depth fractal-depth))
+  (def color-map-atom (reagent/atom color-map))
+  ;; (js/console.log (clj->js color-map))
+  [:span.main
+    [:h1 "About mike"]
+    [:div {:style {:width "1000px" :height "1000px" :display "flex" :justify-content "center" :align-items "center"}}
+      (square-fractal fractal-depth color-map-atom)]
+    [state-ful-with-atom]
+    ])
 
 
 ;; -------------------------
